@@ -6,403 +6,113 @@
     <title>Memory Trainer</title>
 
     <!--
-        CSS = styling/utseende. Alt mellom <style>-taggene
-        bestemmer hvordan ting SER ut på skjermen.
+        Her ser du hvordan vi LINKER til separate filer i stedet for
+        å ha alt i én fil. Nettleseren henter og bruker dem automatisk.
+
+        Rekkefølgen betyr noe:
+        1. main.css først (grunnleggende styling)
+        2. Spill-spesifikk CSS etterpå (overstyrer/utvider)
     -->
-    <style>
-        /* Grunnleggende sideoppsett */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #1a1a2e;
-            color: #eee;
-            display: flex;            /* Flexbox: en måte å plassere ting på */
-            flex-direction: column;   /* Stablet ovenfra og ned */
-            align-items: center;      /* Sentrert horisontalt */
-            min-height: 100vh;        /* vh = viewport height, altså hele skjermhøyden */
-            margin: 0;
-            padding: 20px;
-        }
-
-        h1 {
-            margin-bottom: 5px;
-        }
-
-        /* Infoboksen med forsøk og tid */
-        .stats {
-            display: flex;
-            gap: 30px;               /* Avstand mellom elementene */
-            margin-bottom: 20px;
-            font-size: 1.1rem;
-        }
-
-        /* Rutenettet som holder alle kortene */
-        .game-board {
-            display: grid;
-            grid-template-columns: repeat(4, 100px);  /* 4 kolonner, hver 100px bred */
-            gap: 10px;                                  /* 10px mellom kortene */
-        }
-
-        /* Hvert enkelt kort */
-        .card {
-            width: 100px;
-            height: 100px;
-            background-color: #16213e;
-            border: 2px solid #0f3460;
-            border-radius: 10px;          /* Avrundede hjørner */
-            cursor: pointer;              /* Pekerhånd når du holder over */
-            display: flex;
-            align-items: center;          /* Sentrerer innholdet vertikalt */
-            justify-content: center;      /* Sentrerer innholdet horisontalt */
-            font-size: 2rem;
-            transition: all 0.3s ease;    /* Jevn animasjon over 0.3 sekunder */
-            user-select: none;            /* Forhindrer markering av tekst */
-        }
-
-        /* Når du holder musen over et kort */
-        .card:hover {
-            background-color: #1a1a4e;
-            transform: scale(1.05);       /* Gjør kortet 5% større */
-        }
-
-        /* Kort som er snudd (synlig) */
-        .card.flipped {
-            background-color: #e94560;
-            border-color: #e94560;
-        }
-
-        /* Kort som er matchet (ferdig) */
-        .card.matched {
-            background-color: #0f9b58;
-            border-color: #0f9b58;
-            cursor: default;
-        }
-
-        /* Restart-knappen */
-        button {
-            margin-top: 20px;
-            padding: 12px 30px;
-            font-size: 1rem;
-            background-color: #e94560;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #c73e54;
-        }
-
-        /* Melding som vises når du vinner */
-        .win-message {
-            margin-top: 15px;
-            font-size: 1.3rem;
-            color: #0f9b58;
-            display: none;            /* Skjult som standard */
-        }
-
-        /* High score-listen */
-        .highscores {
-            margin-top: 20px;
-            background-color: #16213e;
-            border-radius: 10px;
-            padding: 15px 25px;
-            min-width: 300px;
-        }
-
-        .highscores h2 {
-            margin-top: 0;
-            font-size: 1.1rem;
-            color: #e94560;
-        }
-
-        .highscores ol {
-            padding-left: 20px;       /* Plass til tallene i listen */
-            margin: 0;
-        }
-
-        .highscores li {
-            padding: 4px 0;
-            font-size: 0.95rem;
-        }
-
-        .highscores li .new-score {
-            color: #0f9b58;
-            font-weight: bold;
-        }
-
-        .highscores .empty {
-            color: #666;
-            font-style: italic;
-        }
-    </style>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/memory.css">
+    <link rel="stylesheet" href="styles/sequence.css">
 </head>
 <body>
 
-    <!--
-        HTML = strukturen/innholdet.
-        Her definerer vi WHAT som vises, ikke HOW det ser ut (det gjør CSS).
-    -->
     <h1>Memory Trainer</h1>
-    <p>Finn alle parene!</p>
+    <p>Tren hukommelsen din med ulike spill!</p>
 
-    <div class="stats">
-        <span>Forsøk: <strong id="attempts">0</strong></span>
-        <span>Par funnet: <strong id="matches">0</strong> / <strong id="total-pairs">0</strong></span>
+    <!-- ================================
+         SPILLVELGER — fanene øverst
+         ================================ -->
+    <div class="game-selector">
+        <button class="game-tab active" onclick="switchGame('memory')">
+            🃏 Memory
+        </button>
+        <button class="game-tab" onclick="switchGame('sequence')">
+            🎨 Colour Sequence
+        </button>
     </div>
 
-    <div class="game-board" id="game-board">
-        <!-- Kortene legges inn her av JavaScript -->
+    <!-- ================================
+         SPILL 1: MEMORY
+         ================================ -->
+    <div id="game-memory" class="game-area active">
+        <div class="stats">
+            <span>Forsøk: <strong id="memory-attempts">0</strong></span>
+            <span>Par funnet: <strong id="memory-matches">0</strong> / <strong id="memory-total">0</strong></span>
+        </div>
+
+        <div class="memory-board" id="memory-board"></div>
+
+        <button class="btn" onclick="startMemory()">Nytt spill</button>
+        <div class="result-message" id="memory-result">Gratulerer! Du klarte det!</div>
+
+        <div class="highscores">
+            <h2>Topp 5 — færrest forsøk</h2>
+            <div id="memory-highscores"></div>
+        </div>
     </div>
 
-    <button onclick="startGame()">Nytt spill</button>
-    <div class="win-message" id="win-message">Gratulerer! Du klarte det!</div>
+    <!-- ================================
+         SPILL 2: COLOUR SEQUENCE
+         ================================ -->
+    <div id="game-sequence" class="game-area">
+        <div class="level-info" id="sequence-level">Runde 1 — husk 3 farger</div>
+        <div class="sequence-status" id="sequence-status"></div>
 
-    <!-- High score-listen -->
-    <div class="highscores">
-        <h2>Topp 5 beste forsøk</h2>
-        <div id="highscore-list"></div>
+        <div class="sequence-display" id="sequence-display"></div>
+        <div class="colour-grid" id="colour-grid"></div>
+
+        <button class="btn" onclick="startSequence()">Nytt spill</button>
+        <div class="result-message" id="sequence-result"></div>
+
+        <div class="highscores">
+            <h2>Topp 5 — høyeste nivå</h2>
+            <div id="sequence-highscores"></div>
+        </div>
     </div>
 
     <!--
-        JAVASCRIPT = oppførselen/logikken.
-        Alt mellom <script>-taggene er kode som GJØR ting:
-        reagerer på klikk, oppdaterer poeng, osv.
+        JavaScript-filene lastes NEDERST i <body>.
+        Hvorfor? Fordi HTML-en må finnes FØR JavaScript prøver
+        å finne elementer med getElementById() osv.
+
+        Tenk på det som: du kan ikke lete i en bok
+        som ikke er skrevet ennå.
     -->
+    <script src="scripts/memory.js"></script>
+    <script src="scripts/sequence.js"></script>
+
+    <!-- Denne lille biten "limer sammen" spillvelgeren og spillene -->
     <script>
-        // ==========================================
-        // SPILLDATA (variabler som holder tilstanden)
-        // ==========================================
-
-        // Emojiene vi bruker som kort-symboler. Hvert symbol trenger et par.
-        const symbols = ['🐶', '🐱', '🐸', '🦊', '🐻', '🐼', '🐨', '🦁'];
-
-        // Disse variablene holder styr på spillets tilstand.
-        // "let" betyr at verdien kan endres underveis.
-        let cards = [];              // Alle kortene i spillet
-        let flippedCards = [];       // Kort som er snudd akkurat nå (maks 2)
-        let matchedPairs = 0;        // Antall par funnet
-        let attempts = 0;            // Antall forsøk
-        let totalPairs = symbols.length;  // Totalt antall par
-        let isLocked = false;        // Hindrer klikk mens kort snur tilbake
-
-        // ==========================================
-        // HIGH SCORE (lagring i nettleseren)
-        // ==========================================
-
-        // localStorage er nettleserens innebygde "mini-database".
-        // Data overlever selv om du lukker fanen eller PCen.
-        // Den lagrer alt som tekst, så vi bruker JSON for å konvertere
-        // mellom tekst og JavaScript-objekter.
-        //
-        // MEN: noen miljøer (som preview-paneler) blokkerer localStorage.
-        // Derfor sjekker vi først om det fungerer, og bruker en
-        // variabel i minnet som backup.
-
-        let inMemoryScores = [];  // Backup hvis localStorage ikke virker
-
-        /** Sjekker om localStorage er tilgjengelig */
-        function hasLocalStorage() {
-            try {
-                localStorage.setItem('test', 'test');
-                localStorage.removeItem('test');
-                return true;
-            } catch (e) {
-                return false;
-            }
-        }
-
         /**
-         * Henter high scores fra localStorage (eller minnet som backup).
-         * JSON.parse() gjør tekst om til en JavaScript-liste.
+         * Bytter mellom spillene.
+         * Viser det valgte spillet og skjuler det andre.
+         *
+         * Denne funksjonen er et godt eksempel på HVORFOR vi
+         * splitter i filer: hvert spill vet ingenting om det andre.
+         * Denne "lim-koden" er den eneste som kjenner begge.
          */
-        function getHighScores() {
-            if (hasLocalStorage()) {
-                const saved = localStorage.getItem('memoryHighScores');
-                return saved ? JSON.parse(saved) : [];
-            }
-            return inMemoryScores;
-        }
-
-        /**
-         * Lagrer en ny score og beholder kun de 5 beste.
-         * JSON.stringify() gjør en JavaScript-liste om til tekst.
-         */
-        function saveHighScore(score) {
-            const scores = getHighScores();
-            scores.push({
-                attempts: score,
-                date: new Date().toLocaleDateString('no-NO')  // Norsk datoformat
+        function switchGame(gameName) {
+            // Skjul alle spillområder
+            document.querySelectorAll('.game-area').forEach(function(area) {
+                area.classList.remove('active');
             });
-            // Sorter: færrest forsøk først (lavest er best)
-            scores.sort(function(a, b) { return a.attempts - b.attempts; });
-            // Behold kun topp 5
-            const topFive = scores.slice(0, 5);
+            // Vis det valgte
+            document.getElementById('game-' + gameName).classList.add('active');
 
-            if (hasLocalStorage()) {
-                localStorage.setItem('memoryHighScores', JSON.stringify(topFive));
-            } else {
-                inMemoryScores = topFive;
-            }
-            return topFive;
-        }
-
-        /**
-         * Viser high score-listen i HTML-en.
-         * newScore = scoren fra nettopp (for å markere den grønn), eller null.
-         */
-        function displayHighScores(newScore) {
-            const scores = getHighScores();
-            const container = document.getElementById('highscore-list');
-
-            if (scores.length === 0) {
-                container.innerHTML = '<p class="empty">Ingen resultater ennå. Spill en runde!</p>';
-                return;
-            }
-
-            let html = '<ol>';
-            scores.forEach(function(entry) {
-                // Marker den nye scoren med grønn farge
-                const isNew = (newScore !== null && entry.attempts === newScore);
-                const cssClass = isNew ? ' class="new-score"' : '';
-                html += '<li' + cssClass + '>'
-                    + entry.attempts + ' forsøk — ' + entry.date
-                    + '</li>';
+            // Oppdater fanene
+            document.querySelectorAll('.game-tab').forEach(function(tab) {
+                tab.classList.remove('active');
             });
-            html += '</ol>';
-            container.innerHTML = html;
+            // Finn fanen som ble klikket og marker den
+            event.target.classList.add('active');
         }
 
-        // ==========================================
-        // FUNKSJONER (gjenbrukbare blokker med kode)
-        // ==========================================
-
-        /**
-         * Blander en liste tilfeldig (Fisher-Yates-algoritmen).
-         * Denne funksjonen tar inn en array og returnerer den i tilfeldig rekkefølge.
-         */
-        function shuffle(array) {
-            // Vi går baklengs gjennom listen
-            for (let i = array.length - 1; i > 0; i--) {
-                // Velger en tilfeldig posisjon mellom 0 og i
-                const j = Math.floor(Math.random() * (i + 1));
-                // Bytter plass på element i og j
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-        /**
-         * Starter (eller restarter) spillet.
-         * Denne funksjonen:
-         * 1. Nullstiller all tilstand
-         * 2. Lager kort-par og blander dem
-         * 3. Tegner kortene på skjermen
-         */
-        function startGame() {
-            // Nullstill tilstand
-            matchedPairs = 0;
-            attempts = 0;
-            flippedCards = [];
-            isLocked = false;
-
-            // Oppdater visningen
-            document.getElementById('attempts').textContent = '0';
-            document.getElementById('matches').textContent = '0';
-            document.getElementById('total-pairs').textContent = totalPairs;
-            document.getElementById('win-message').style.display = 'none';
-
-            // Lag kort: hvert symbol dupliseres for å lage par, så blandes alt
-            cards = shuffle([...symbols, ...symbols]);
-            // Forklaring: [...symbols, ...symbols] lager en ny liste med hvert
-            // symbol to ganger. "..." (spread) pakker ut en liste.
-            // Så: ['🐶','🐱',...] + ['🐶','🐱',...] = ['🐶','🐱',...,'🐶','🐱',...]
-
-            // Finn brettet i HTML-en og tøm det
-            const board = document.getElementById('game-board');
-            board.innerHTML = '';
-
-            // Lag et HTML-element for hvert kort
-            cards.forEach(function(symbol, index) {
-                // Opprett et nytt <div>-element
-                const card = document.createElement('div');
-                card.classList.add('card');          // Gi det CSS-klassen "card"
-                card.dataset.symbol = symbol;        // Lagre symbolet som data på elementet
-                card.dataset.index = index;          // Lagre posisjonen
-                card.textContent = '?';              // Vis spørsmålstegn (baksiden)
-
-                // Når noen klikker på dette kortet, kjør flipCard-funksjonen
-                card.addEventListener('click', function() {
-                    flipCard(card);
-                });
-
-                // Legg kortet til på brettet
-                board.appendChild(card);
-            });
-        }
-
-        /**
-         * Snur et kort. Dette er hovedlogikken i spillet.
-         * Kalles hver gang spilleren klikker på et kort.
-         */
-        function flipCard(card) {
-            // Ignorer klikk hvis:
-            // - vi venter på at kort skal snu tilbake (isLocked)
-            // - kortet allerede er snudd
-            // - kortet allerede er matchet
-            if (isLocked) return;
-            if (card.classList.contains('flipped')) return;
-            if (card.classList.contains('matched')) return;
-
-            // Snu kortet: vis symbolet og legg til "flipped"-klassen
-            card.textContent = card.dataset.symbol;
-            card.classList.add('flipped');
-
-            // Legg kortet til i listen over snudde kort
-            flippedCards.push(card);
-
-            // Hvis to kort er snudd, sjekk om de matcher
-            if (flippedCards.length === 2) {
-                attempts++;
-                document.getElementById('attempts').textContent = attempts;
-
-                const [card1, card2] = flippedCards;  // Hent de to kortene
-
-                if (card1.dataset.symbol === card2.dataset.symbol) {
-                    // MATCH! Merk begge som matchet
-                    card1.classList.add('matched');
-                    card2.classList.add('matched');
-                    matchedPairs++;
-                    document.getElementById('matches').textContent = matchedPairs;
-                    flippedCards = [];
-
-                    // Sjekk om alle par er funnet
-                    if (matchedPairs === totalPairs) {
-                        document.getElementById('win-message').style.display = 'block';
-                        // Lagre og vis oppdatert high score
-                        saveHighScore(attempts);
-                        displayHighScores(attempts);
-                    }
-                } else {
-                    // IKKE MATCH — snu kortene tilbake etter en kort pause
-                    isLocked = true;  // Lås brettet mens vi venter
-                    setTimeout(function() {
-                        card1.textContent = '?';
-                        card1.classList.remove('flipped');
-                        card2.textContent = '?';
-                        card2.classList.remove('flipped');
-                        flippedCards = [];
-                        isLocked = false;  // Lås opp igjen
-                    }, 800);  // 800 millisekunder = 0.8 sekunder
-                }
-            }
-        }
-
-        // ==========================================
-        // START! Kjør spillet når siden lastes
-        // ==========================================
-        startGame();
-        displayHighScores(null);  // Vis eksisterende high scores
+        // Start begge spillene når siden lastes
+        startMemory();
+        startSequence();
     </script>
 
 </body>

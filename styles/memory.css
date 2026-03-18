@@ -1,0 +1,43 @@
+/*
+  MEMORY.CSS — Styling kun for memory-spillet.
+
+  Alt som er spesifikt for kortspillet ligger her,
+  slik at det ikke blander seg med andre spill.
+*/
+
+.memory-board {
+    display: grid;
+    grid-template-columns: repeat(4, 100px);
+    gap: 10px;
+}
+
+.memory-card {
+    width: 100px;
+    height: 100px;
+    background-color: #16213e;
+    border: 2px solid #0f3460;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.memory-card:hover {
+    background-color: #1a1a4e;
+    transform: scale(1.05);
+}
+
+.memory-card.flipped {
+    background-color: #e94560;
+    border-color: #e94560;
+}
+
+.memory-card.matched {
+    background-color: #0f9b58;
+    border-color: #0f9b58;
+    cursor: default;
+}

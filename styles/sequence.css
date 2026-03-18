@@ -1,0 +1,80 @@
+/*
+  SEQUENCE.CSS — Styling kun for colour sequence-spillet.
+*/
+
+/* Meldingen som viser "Se nøye!" / "Din tur!" */
+.sequence-status {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    min-height: 30px;
+}
+
+/* Rutenettet med farge-knapper */
+.colour-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 80px);
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Hver farge-knapp */
+.colour-btn {
+    width: 80px;
+    height: 80px;
+    border: 3px solid transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0.4;                /* Dempet som standard */
+}
+
+/* Når en farge er "aktiv" (lyser opp) */
+.colour-btn.lit {
+    opacity: 1;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+/* Når spilleren kan klikke */
+.colour-btn.clickable {
+    opacity: 0.7;
+    cursor: pointer;
+}
+
+.colour-btn.clickable:hover {
+    opacity: 1;
+    transform: scale(1.08);
+}
+
+/* Sekvens-visningen: prikkene som viser rekkefølgen */
+.sequence-display {
+    display: flex;
+    gap: 8px;
+    margin: 15px 0;
+    min-height: 30px;
+}
+
+.sequence-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid #333;
+    transition: all 0.3s ease;
+}
+
+.sequence-dot.correct {
+    background-color: #0f9b58;
+    border-color: #0f9b58;
+}
+
+.sequence-dot.wrong {
+    background-color: #e94560;
+    border-color: #e94560;
+}
+
+/* Nivå-indikator */
+.level-info {
+    font-size: 1.1rem;
+    color: #aaa;
+    margin-bottom: 10px;
+}

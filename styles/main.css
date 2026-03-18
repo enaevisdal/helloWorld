@@ -1,0 +1,141 @@
+/*
+  MAIN.CSS — Felles styling for hele appen.
+
+  Alt som deles mellom spillene ligger her:
+  farger, fonter, layout, knapper, osv.
+
+  De individuelle spillene har egne CSS-filer
+  for ting som kun gjelder dem.
+*/
+
+/* Grunnleggende sideoppsett */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a2e;
+    color: #eee;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    margin-bottom: 5px;
+}
+
+/* ================================
+   SPILLVELGER (navigasjon mellom spill)
+   ================================ */
+
+.game-selector {
+    display: flex;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+/* Hver "fane" i spillvelgeren */
+.game-tab {
+    padding: 10px 25px;
+    font-size: 1rem;
+    background-color: #16213e;
+    color: #aaa;
+    border: 2px solid #0f3460;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.game-tab:hover {
+    background-color: #1a1a4e;
+    color: #eee;
+}
+
+/* Den aktive fanen — viser hvilket spill du er i */
+.game-tab.active {
+    background-color: #e94560;
+    border-color: #e94560;
+    color: white;
+}
+
+/* ================================
+   FELLES ELEMENTER
+   ================================ */
+
+/* Infoboksen med forsøk, tid, osv. */
+.stats {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+/* Standard knapp-styling */
+.btn {
+    margin-top: 20px;
+    padding: 12px 30px;
+    font-size: 1rem;
+    background-color: #e94560;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #c73e54;
+}
+
+/* Vinn-/resultatmelding */
+.result-message {
+    margin-top: 15px;
+    font-size: 1.3rem;
+    color: #0f9b58;
+    display: none;
+}
+
+/* High score-listen (brukes av begge spill) */
+.highscores {
+    margin-top: 20px;
+    background-color: #16213e;
+    border-radius: 10px;
+    padding: 15px 25px;
+    min-width: 300px;
+}
+
+.highscores h2 {
+    margin-top: 0;
+    font-size: 1.1rem;
+    color: #e94560;
+}
+
+.highscores ol {
+    padding-left: 20px;
+    margin: 0;
+}
+
+.highscores li {
+    padding: 4px 0;
+    font-size: 0.95rem;
+}
+
+.highscores li .new-score {
+    color: #0f9b58;
+    font-weight: bold;
+}
+
+.highscores .empty {
+    color: #666;
+    font-style: italic;
+}
+
+/* Spillområder — kun den aktive vises */
+.game-area {
+    display: none;              /* Skjult som standard */
+    flex-direction: column;
+    align-items: center;
+}
+
+.game-area.active {
+    display: flex;              /* Vis kun det aktive spillet */
+}
